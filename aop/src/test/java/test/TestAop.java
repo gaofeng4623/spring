@@ -13,7 +13,7 @@ public class TestAop {
 		//ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 		XmlBeanFactory factory = new XmlBeanFactory(new ClassPathResource("applicationContext.xml"));
 		Service service = (Service) factory.getBean("aopService");
-		//service.todo("1111112");
+		//service.todo("1111111");
 		service.toTest();
 		service.goTest();
 		//service.todo("success");
