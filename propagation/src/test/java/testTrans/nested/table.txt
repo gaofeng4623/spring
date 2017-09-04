@@ -1,0 +1,27 @@
+CREATE TABLE `testa` (
+  `id` int(4) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8
+
+;
+
+CREATE TABLE `testb` (
+  `id` int(4) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8
+
+;
+CREATE TABLE `user` (
+  `id` int(4) DEFAULT NULL,
+  `user_name` varchar(100) DEFAULT NULL,
+  `employe_login_name` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+;
+
+CREATE TABLE `testc` (
+  `id` int(4) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8

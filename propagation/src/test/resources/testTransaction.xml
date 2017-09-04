@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns:context="http://www.fmd.com"
+	xmlns:aop="http://www.fmd.com.cn"
+	default-lazy-init="false">
+	
+	<!-- 加载jdbc资源文件 -->
+	<properties id="jdbc" location="classpath:jdbc.properties"/>
+	
+	<!-- 定义数据源 --> 
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="url" value="#{jdbc.url}"/>
+		<property name="driverClassName" value="#{jdbc.driver}"/>
+		<property name="username" value="#{jdbc.user}"/>
+		<property name="password" value="#{jdbc.password}"/>
+	</bean>
+	
+	<!-- <bean id="autoproxy" class="com.spring.aop.proxy.BeanNameAutoProxyCreator">
+		<property name="beanNames">
+			<value>*</value>
+		</property>
+		<property name="interceptorNames">
+			<list>
+				<value>transactionInterceptor</value>
+			</list>
+		</property>
+		<property name="proxyTargetClass" value="true" />
+	</bean>  -->
+	
+	<bean id="insert" class="testTrans.InsertBeanImpl">
+		<property name="dataSource">
+			<ref bean="dataSource"/>
+		</property>
+	</bean>
+	
+	<bean id="transactionRun" class="com.spring.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager" ref="jdbcTransactionManager"/>
+		<property name="target" ref="insert"/>
+		 <property name="transactionAttributes"><!-- 可选备用属性 -->
+                <props>
+                    <prop key="insert*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED</prop>
+                    <prop key="tran*">PROPAGATION_REQUIRED,ISOLATION_SERIALIZABLE</prop>
+                    <prop key="deposit*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED</prop>
+                </props>
+            </property>
+		<property name="transactionAttributeSource" ref="transactionAttributeSource"/>
+		
+	</bean>
+	
+	
+	<!-- 事务管理器 -->
+	<bean id="txManager" class="com.spring.transaction.manager.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	<bean id="transactionAttributeSource" 
+			class="com.spring.transaction.support.NameMatchTransactionAttributeSource">
+		<property name="properties">
+			<props>
+				<prop key="delete*">PROPAGATION_REQUIRED,-java.sql.SQLException</prop>
+    			<prop key="add*">PROPAGATION_REQUIRED,timeout_20,+Exception1,-Exception2</prop>
+    			<prop key="update*">PROPAGATION_REQUIRED</prop>
+     			<prop key="save*">PROPAGATION_REQUIRED</prop>
+     		    <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="transactionInterceptor" 
+		class="com.spring.transaction.interceptor.TransactionInterceptor">
+		<property name="transactionManager" ref="txManager"/>
+		<property name="transactionAttributes"><!-- 可选备用属性 -->
+                <props>
+                    <prop key="test">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,-java.sql.SQLException</prop>
+                    <prop key="tran*">PROPAGATION_REQUIRED,ISOLATION_SERIALIZABLE</prop>
+                    <prop key="deposit*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED</prop>
+                </props>
+            </property>
+		<property name="transactionAttributeSource" ref="transactionAttributeSource"/>
+	</bean>
+		
+	<!-- 开启IOC注解扫描 -->
+	<component-scan base-package="testTrans" />
+	
+	<!-- 开启AOP注解扫描 -->
+	<aspectj-autoproxy proxy-target-class="true"/>
+	
+	<!-- 事务注解 -->
+	<annotation-driven transaction-manager="txManager" />	
+</beans>

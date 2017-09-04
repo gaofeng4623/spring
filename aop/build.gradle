@@ -1,0 +1,12 @@
+project(':aop') {
+    group 'com.spring'
+    version '1.0-SNAPSHOT'
+    dependencies {
+        compile project(':common')
+        compile project(':beans')
+        testCompile project(':context');
+        testCompile group: 'junit', name: 'junit', version: '4.11'
+    }
+}
+
+

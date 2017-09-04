@@ -1,0 +1,11 @@
+project(':propagation') {
+    group 'com.spring'
+    version '1.0-SNAPSHOT'
+    dependencies {
+        compile project(':beans')
+        compile project(':aop')
+        testCompile project(':dao');
+        testCompile project(':context');
+        testCompile group: 'junit', name: 'junit', version: '4.11'
+    }
+}

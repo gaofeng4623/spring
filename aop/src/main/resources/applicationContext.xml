@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns:context="http://www.fmd.com"
+	xmlns:aop="http://www.fmd.com.cn"
+	xmlns:util="http://www.fmd.com.con"
+	default-lazy-init="false">
+	<!-- 加载jdbc资源文件 -->
+	<properties id="jdbc" location="classpath:jdbc.properties"/>
+	
+	<!-- 定义数据源 --> 
+	<bean id="ds" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="url" value="#{jdbc.url}"/>
+		<property name="driverClassName" value="#{jdbc.driver}"/>
+		<property name="username" value="#{jdbc.user}"/>
+		<property name="password" value="#{jdbc.password}"/>
+		<property name="minIdle" value="5"/> 
+	</bean>
+	
+	<bean id="impl" class="test.DaoImpl">
+		<property name="name">
+			<value>张三</value>
+		</property>
+		<property name="url" value="http://192.168.1.11:8080" />
+	</bean>
+	
+	<bean id="service" class="test.ServiceImpl" destroy-method="close"
+		init-method="init">
+		<property name="dao" ref="impl"></property>
+	</bean>
+	
+	<!-- 多层嵌套 -->
+	<bean id="engine" class="test.Engine" singleton="false"
+		depends-on="service">
+		<property name="server">
+			<ref local="service" />
+		</property>
+	</bean>
+
+	<!-- 通过工厂静态方法得到 -->
+	<bean id="factory1" class="test.ceshi.Factory" factory-method="createInstance" />
+
+	<!-- 通过工厂对象方法得到 -->
+	<bean id="factory2" factory-bean="factory" factory-method="createInstance2" />
+
+	<bean id="factory" class="test.ceshi.Factory" />
+
+	<bean id="globalCat" class="test.Cat">
+		<property name="name" value="全局猫" />
+		<property name="type" value="小花猫" />
+		<property name="arr">
+			<list> 
+				<value>10</value>
+				<value>20</value>
+				<value>30</value>
+			</list>
+		</property>
+		<property name="arr2" ref="list" />
+		<property name="list" ref="list"/>
+	</bean>
+	
+	<bean id="list" class="java.util.ArrayList">
+		<constructor-arg>
+            <list>
+            	<value>关联list转换arr</value>
+            	<value>属性是数组类型，关联的是集合</value>
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<!-- 测试上下文加载规则id/name -->
+	<bean name="nametest" class="test.DaoImpl" scope="prototype">
+		<property name="name">
+			<value>张三</value>
+		</property>
+		<property name="url" value="http://192.168.1.11:8080" />
+	</bean>
+
+	<!-- 测试request域 -->
+	<bean id="requestTest" class="test.RequestTest" scope="request">
+		<property name="msg">
+			<value>测试request域</value>
+		</property>
+	</bean>
+
+	<!-- 测试session域 -->
+	<bean id="sessionTest" class="test.SessionTest" scope="session">
+		<property name="msg">
+			<value>测试session域</value>
+		</property>
+	</bean>
+
+	<!-- 测试DAO层的类 -->
+	<bean id="personDao" class="test.ceshi.PersonDaoImpl" depends-on="dataSource"
+		init-method="initDataBase">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+	</bean>
+
+
+	<!-- 数据源 -->
+	<bean id="dataSource" class="com.spring.dao.jdbc.daosupport.DriverManagerDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@192.168.1.11:1521:orcl" />
+		<property name="username" value="kenli" />
+		<property name="password" value="kenli" />
+	</bean>
+
+	<!-- 数据源池化 -->
+	<!--
+		<bean class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close"> <property name="driverClassName"
+		value="oracle.jdbc.driver.OracleDriver" /> <property name="url"
+		value="jdbc:oracle:thin:@192.168.1.11:1521:orcl" /> <property
+		name="username" value="kenli" /> <property name="password"
+		value="kenli" /></bean>
+	-->
+
+
+	<bean id="aopMethodBeforeInterceptor" class="com.spring.aop.common.xml.advisor.NameMatchMethodPiontcutAdvisor">
+		<property name="advice">
+			<bean class="test.MethodBeforeImpl"></bean>
+		</property>
+		<property name="mappedName" value="*Test"></property>
+	</bean> 
+	
+	<bean id="aopMethodAfterInterceptor" class="com.spring.aop.common.xml.advisor.NameMatchMethodPiontcutAdvisor">
+		<property name="advice">
+			<bean class="test.MethodAfterImpl"></bean>
+		</property>
+		<property name="mappedName" value="*Test"></property>
+	</bean>
+	
+	<bean id="aopService" class="com.spring.aop.proxy.ProxyFactoryBean">
+		<property name="proxyTargetClass"> 
+			<value>true</value> 
+		</property> 
+		<property name="interceptorNames">
+			<list>
+				<value>aopMethodBeforeInterceptor</value>
+				<value>aopMethodAfterInterceptor</value>
+			</list>
+		</property>
+		<property name="target">
+			<bean class="test.ServiceImpl2">
+				<property name="dao" ref="impl" />
+			</bean>
+		</property>
+		
+	</bean>
+			
+	<bean id="myadvice" class="test.aop.MyAdvice"/>
+	<bean id="myPointcut" class="test.aop.MyPointcut"/>
+	<bean id="cat" class="test.Cat"/>
+	
+	<bean class="com.spring.aop.common.xml.advisor.DefaultPointcutAdvisor">
+		<property name="advice" ref="myadvice"/>
+		<property name="pointcut" ref="myPointcut"/>
+	</bean>
+	
+	<bean id="autoproxy" class="com.spring.aop.proxy.BeanNameAutoProxyCreator">
+		<property name="beanNames">
+			<value>dog*</value>
+		</property>
+		<property name="interceptorNames">
+			<list>
+				<value>aopMethodBeforeInterceptor</value>
+				<value>aopMethodAfterInterceptor</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="testp" class="test.bean.TestClassPro">
+		<property name="serviceClass" value="test.bean.TestClassPro"/>
+	</bean>
+	
+	<bean id="ceshi" class="test.ceshi.Ceshi" /><!-- 测试代理范围 -->
+	
+	<!-- 开启IOC注解扫描 -->
+	<component-scan base-package="test.anno" />
+	
+	<!-- 只有当use-default-filters="false"时，子标签filter才会生效 -->
+	<context:component-scan base-package="com.xhlx.finance.budget"  use-default-filters="false">
+  		<context:include-filter type="regex" expression=".service.*"/>
+  		<context:exclude-filter type="regex" expression=".service.*" /><!-- 排除 -->
+	</context:component-scan>
+	
+	<!-- 定义扫描根路径为leot.test，不使用默认的扫描方式 -->
+	<context:component-scan base-package="leot.test" use-default-filters="false">
+  		<!-- 扫描符合@Service @Repository的类 -->
+  		<context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
+  		<context:include-filter type="annotation" expression="org.springframework.stereotype.Repository" />
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	<!-- 开启AOP注解扫描 aop,开启cglib模式-->
+	<aspectj-autoproxy proxy-target-class="true"/>
+	
+	<!-- 事务注解 -->
+	<annotation-driven transaction-manager="txManager" />
+	
+	<!-- 导入外置的XML资源 -->
+	<import resource="systemContext.xml" />	
+</beans>

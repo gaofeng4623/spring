@@ -1,0 +1,9 @@
+rootProject.name = 'spring'
+include 'common'
+include 'beans'
+include 'aop'
+include 'context'
+include 'dao'
+include 'mvc'
+include 'propagation'
+

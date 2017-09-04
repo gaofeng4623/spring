@@ -1,0 +1,80 @@
+allprojects {
+    group 'com.spring'
+    version '1.0-SNAPSHOT'
+    apply plugin: 'idea'
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    sourceCompatibility = 1.7
+    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+}
+
+subprojects {
+    ext {
+        javassistVersion = "3.7.1.GA"
+        commonsIoVersion = "1.4"
+        commonsFileUpload = "1.2.2"
+        mysqlVersion = "5.1.8"
+        dbcpVersion = "1.2.2"
+    }
+    //公共仓库配置
+    repositories {
+        jcenter()
+    }
+
+    //公共编译配置
+    processResources {
+        from('src/main/java') {
+            include '**/*'
+            exclude '**/*.java'
+        }
+        copy{
+            from('src/main/resources') {
+                include('**/*')
+            }
+            into("$buildDir/classes/main")
+        }
+    }
+
+    //公共编译配置测试
+    processTestResources {
+        from('src/test/java') {
+            include '**/*'
+            exclude '**/*.java'
+        }
+        copy{
+            from('src/test/resources') {
+                include('**/*')
+            }
+            into("$buildDir/classes/test")
+        }
+    }
+
+    //公共打包任务
+    task jarWithoutResources(type: Jar) {
+        baseName project.name
+        from("$buildDir/classes/main")
+    }
+
+    //依赖管理
+    dependencies {
+        testCompile group: 'junit', name: 'junit', version: '4.11'
+        //容器相关
+        compile("javax.servlet:javax.servlet-api:3.1.0",
+                "javax.servlet.jsp:jsp-api:2.2.1-b03")
+        //字节码技术
+        compile("javassist:javassist:$javassistVersion")
+        //mysql驱动
+        compile("mysql:mysql-connector-java:$mysqlVersion")
+        //commons-dbcp
+        compile("commons-dbcp:commons-dbcp:$dbcpVersion")
+        //commons-collections
+        compile("commons-collections:commons-collections:3.1") {
+            exclude group: 'org.springframework', module: 'spring-beans'
+            exclude group: 'org.springframework', module: 'spring-core'
+        }
+        //文件上传
+        compile("commons-io:commons-io:$commonsIoVersion",
+                "commons-fileupload:commons-fileupload:$commonsFileUpload")
+    }
+}
+
