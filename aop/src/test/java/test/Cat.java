@@ -40,7 +40,7 @@ public class Cat {
 		this.type = type;
 	}
 	public void testAop1() {
-		System.out.println("test1>>>>>>>>>>>>>1");
+		System.out.println("test1>>>>>>>>>>>>>");
 	}
 	public void testAop2() {
 		System.out.println("test2>>>>>>>>>>>>>");
