@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+	<bean id="viewResolver"
+			class="com.spring.mvc.servlet.view.InternalResourceViewResolver">
+		<property name="prefix"><!-- JSP前缀,一般为文件夹 -->
+			<value>/WEB-INF/jsp/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+	
+	<!-- 返回json数据 -->
+	<bean name="jsonView" class="com.spring.mvc.servlet.view.MappingJackson2JsonView"/>
+	
+	<bean id="paraMethodResolver" 
+			class="com.spring.mvc.common.ParameterMethodResolver">
+		<property name="paramName">
+			<value>action</value>
+		</property>
+		<property name="defaultMethodName">
+			<value>run</value>
+		</property>
+	</bean>
+	
+	<bean id="urlHandleMapping" 
+			class="com.spring.mvc.servlet.mappings.SimpleUrlHandleMapping">
+		<property name="urlMap">
+			<props>
+				<prop key="/cat.do">catController</prop>
+				<prop key="/multicat.do">multiCatController</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- 单一控制器，也可以通过手动分发参数对应方法 -->
+	<bean id="catController" class="test.CatController">
+		<property name="catService" ref="catService" />
+	</bean>
+	
+	<!-- 多功能的控制器,自动分发到参数对应方法 -->
+	<bean id="multiCatController" class="test.CatMultiController">
+		<property name="catService" ref="catService" />
+	</bean>
+	
+	<!-- 业务层Model -->
+	<bean id="catService" class="test.CatServer" singleton="false"/>
+	
+	<bean id="mvcCat" class="test.Cat">
+		<property name="name" value="mvc猫" />
+		<property name="type" value="波斯猫" />
+	</bean>
+	
+	<bean class="com.spring.mvc.servlet.exresolver.SimpleMappingExceptionResolver">
+	
+		<property name="defaultErrorView" value="error"/>
+		<property name="exceptionAttribute" value="exception"/>
+		<property name="exceptionMappings">
+			<props>
+				<prop key="java.io.IOException">error/ioexp</prop>
+				<prop key="java.sql.SQLException">error/sqlexp</prop>
+			</props>
+		</property>
+	</bean>
+	
+	 
+	<bean class="com.spring.mvc.servlet.mappings.BeanNameUrlHandlerMapping"/>
+	
+	<bean name="/welcome*.do" class="test.WelcomeController" />
+	
+</beans>
