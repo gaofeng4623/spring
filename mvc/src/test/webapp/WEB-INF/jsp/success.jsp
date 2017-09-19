@@ -13,7 +13,6 @@
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	-->
   </head>
-  
   <body>
     This is my success page. <br>
   </body>
