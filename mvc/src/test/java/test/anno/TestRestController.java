@@ -46,7 +46,7 @@ public class TestRestController {
 		//if (1 == 1) throw new SQLException("测试异常.............");
 		return user;
 	}
-	
+
 	@RequestMapping(value="process-instance/{processInstanceId}", method = RequestMethod.GET, produces = "application/json")
 	public User getName1(@PathVariable("processInstanceId") int id) {
 		System.out.println("执行查询" + id);
