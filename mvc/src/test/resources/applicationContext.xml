@@ -25,22 +25,6 @@
 		<property name="dao" ref="impl"></property>
 	</bean>
 	
-	<!-- 多层嵌套 -->
-	<bean id="engine" class="test.Engine" singleton="false"
-		depends-on="service">
-		<property name="server">
-			<ref local="service" />
-		</property>
-	</bean>
-
-	<!-- 通过工厂静态方法得到 -->
-	<bean id="factory1" class="test.ceshi.Factory" factory-method="createInstance" />
-
-	<!-- 通过工厂对象方法得到 -->
-	<bean id="factory2" factory-bean="factory" factory-method="createInstance2" />
-
-	<bean id="factory" class="test.ceshi.Factory" />
-
 	<bean id="globalCat" class="test.Cat">
 		<property name="name" value="全局猫" />
 		<property name="type" value="小花猫" />
@@ -71,91 +55,8 @@
 		</property>
 		<property name="url" value="http://192.168.1.11:8080" />
 	</bean>
-
-	<!-- 测试request域 -->
-	<bean id="requestTest" class="test.RequestTest" scope="request">
-		<property name="msg">
-			<value>测试request域</value>
-		</property>
-	</bean>
-
-	<!-- 测试session域 -->
-	<bean id="sessionTest" class="test.SessionTest" scope="session">
-		<property name="msg">
-			<value>测试session域</value>
-		</property>
-	</bean>
-
-	<!-- 数据源池化 -->
-	<!--
-		<bean class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close"> <property name="driverClassName"
-		value="oracle.jdbc.driver.OracleDriver" /> <property name="url"
-		value="jdbc:oracle:thin:@192.168.1.11:1521:orcl" /> <property
-		name="username" value="kenli" /> <property name="password"
-		value="kenli" /></bean>
-	-->
-
-
-	<bean id="aopMethodBeforeInterceptor" class="com.spring.aop.common.xml.advisor.NameMatchMethodPiontcutAdvisor">
-		<property name="advice">
-			<bean class="test.MethodBeforeImpl"></bean>
-		</property>
-		<property name="mappedName" value="*Test"></property>
-	</bean> 
-	
-	<bean id="aopMethodAfterInterceptor" class="com.spring.aop.common.xml.advisor.NameMatchMethodPiontcutAdvisor">
-		<property name="advice">
-			<bean class="test.MethodAfterImpl"></bean>
-		</property>
-		<property name="mappedName" value="*Test"></property>
-	</bean>
-	
-	<bean id="aopService" class="com.spring.aop.proxy.ProxyFactoryBean">
-		<property name="proxyTargetClass"> 
-			<value>true</value> 
-		</property> 
-		<property name="interceptorNames">
-			<list>
-				<value>aopMethodBeforeInterceptor</value>
-				<value>aopMethodAfterInterceptor</value>
-			</list>
-		</property>
-		<property name="target">
-			<bean class="test.ServiceImpl2">
-				<property name="dao" ref="impl" />
-			</bean>
-		</property>
-		
-	</bean>
-			
-	<bean id="myadvice" class="test.aop.MyAdvice"/>
-	<bean id="myPointcut" class="test.aop.MyPointcut"/>
 	<bean id="cat" class="test.Cat"/>
-	
-	<bean class="com.spring.aop.common.xml.advisor.DefaultPointcutAdvisor">
-		<property name="advice" ref="myadvice"/>
-		<property name="pointcut" ref="myPointcut"/>
-	</bean>
-	
-	<bean id="autoproxy" class="com.spring.aop.proxy.BeanNameAutoProxyCreator">
-		<property name="beanNames">
-			<value>dog*</value>
-		</property>
-		<property name="interceptorNames">
-			<list>
-				<value>aopMethodBeforeInterceptor</value>
-				<value>aopMethodAfterInterceptor</value>
-			</list>
-		</property>
-	</bean>
-	
-	<bean id="testp" class="test.bean.TestClassPro">
-		<property name="serviceClass" value="test.bean.TestClassPro"/>
-	</bean>
-	
-	<bean id="ceshi" class="test.ceshi.Ceshi" /><!-- 测试代理范围 -->
-	
+
 	<!-- 开启IOC注解扫描 -->
 	<component-scan base-package="test.anno" />
 	
