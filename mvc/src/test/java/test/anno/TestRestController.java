@@ -18,7 +18,7 @@ import com.spring.mvc.common.annotation.RequestMapping;
 import com.spring.mvc.common.annotation.RequestParam;
 import com.spring.mvc.common.annotation.SessionAttributes;
 
-//构建基于restful的webservice
+//构建基于restful的webservice http://localhost:8080/Spring/restful.jsp
 @RestController
 @RequestMapping("rest")
 public class TestRestController {
@@ -46,8 +46,6 @@ public class TestRestController {
 		//if (1 == 1) throw new SQLException("测试异常.............");
 		return user;
 	}
-	
-	//测试rest: http://localhost:8080/Spring/restful.jsp
 	
 	@RequestMapping(value="process-instance/{processInstanceId}", method = RequestMethod.GET, produces = "application/json")
 	public User getName1(@PathVariable("processInstanceId") int id) {
