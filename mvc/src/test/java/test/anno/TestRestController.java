@@ -28,15 +28,15 @@ public class TestRestController {
 	/***
 	 * 测试注解
 	 * @return
-	 * http://localhost:8080/Spring/rest/process-instance/D2913-2B32-8734-9898/98.do?name2=123&age=28&love=loveyou&user=test
+	 * http://localhost:8080/Spring/rest/base-instance/D2913-2B32-8734-9898/98.do?name2=123&age=28&love=loveyou&user=test
 	 * @throws Exception 
 	 */
-	@RequestMapping(value="process-instance/{processInstanceId}/{itemId}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value="base-instance/{baseInstanceId}/{itemId}", method = RequestMethod.GET, produces = "application/json")
 	public User getName(@RequestParam("name2") String name, @PathVariable int itemId,
-			@PathVariable("processInstanceId") String testNum, @RequestParam("age") int age,@SessionAttributes("love") String love, 
+			@PathVariable("baseInstanceId") String testNum, @RequestParam("age") int age,@SessionAttributes("love") String love,
 			HttpServletRequest request, @ModelAttribute("user") User user) throws Exception {
 		//impl.print("测试");
-		System.out.println(" processInstanceId ==" + testNum + ",itemId ==" + itemId);
+		System.out.println(" baseInstanceId ==" + testNum + ",itemId ==" + itemId);
 		System.out.println("name = " + name + " age=" + age);
 		System.out.println("reqAttr = " +request.getAttribute("age"));
 		System.out.println("sessionAttr = " + request.getSession().getAttribute("love"));
