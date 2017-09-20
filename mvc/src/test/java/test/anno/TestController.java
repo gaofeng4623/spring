@@ -143,6 +143,8 @@ public class TestController extends BaseController{
 		for (String s : tempModelPathArr) {
 			System.out.println("s =" + s);
 		}
+		url = "dd.do";
+		System.out.println(Pattern.matches("((?!/).)*", url));
 		
 	}
 	

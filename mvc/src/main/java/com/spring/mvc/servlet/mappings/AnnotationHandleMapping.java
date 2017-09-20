@@ -50,7 +50,7 @@ public class AnnotationHandleMapping implements HandleMapping{
 			String key = it.next();
 			String methodPath = key.substring(0, key.lastIndexOf("_"));
 			AnnotationController act = controllers.get(key);
-			String regx = methodPath.replaceAll("['{'][0-9a-zA-Z_-]*['}']", ".*");
+			String regx = methodPath.replaceAll("['{'][0-9a-zA-Z_-]*['}']", "((?!/).)*");
 			if (Pattern.matches(regx, mvcName)) {
 				if (!Server.isEmpty(act.getRequestMethod())) {
 					if (method.equalsIgnoreCase(act.getRequestMethod())) {
